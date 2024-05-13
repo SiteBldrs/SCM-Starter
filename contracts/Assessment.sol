@@ -9,13 +9,17 @@ contract Assessment {
 
     event Deposit(uint256 amount);
     event Withdraw(uint256 amount);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     constructor(uint initBalance) payable {
         owner = payable(msg.sender);
         balance = initBalance;
     }
 
-    function getBalance() public view returns(uint256){
+    function getBalance() public view returns (uint256) {
         return balance;
     }
 
@@ -31,7 +35,6 @@ contract Assessment {
         // assert transaction completed successfully
         assert(balance == _previousBalance + _amount);
 
-        // emit the event
         emit Deposit(_amount);
     }
 
@@ -56,5 +59,16 @@ contract Assessment {
 
         // emit the event
         emit Withdraw(_withdrawAmount);
+    }
+
+    function transferOwnership(address payable _newOwner) public {
+        require(msg.sender == owner, "Only the owner can transfer ownership");
+        address previousOwner = owner;
+        owner = _newOwner;
+        emit OwnershipTransferred(previousOwner, _newOwner);
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
     }
 }
